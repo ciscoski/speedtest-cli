@@ -8,6 +8,7 @@ import (
 	"math"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -17,8 +18,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
-	"librespeed-cli/defs"
-	"librespeed-cli/report"
+	"github.com/librespeed/speedtest-cli/defs"
+	"github.com/librespeed/speedtest-cli/report"
 )
 
 const (
@@ -193,13 +194,13 @@ func doSpeedTest(c *cli.Context, servers []defs.Server, telemetryServer defs.Tel
 		if err := gocsv.MarshalWithoutHeaders(&reps_csv, &buf); err != nil {
 			log.Errorf("Error generating CSV report: %s", err)
 		} else {
-			log.Warn(buf.String())
+			os.Stdout.WriteString(buf.String())
 		}
 	} else if c.Bool(defs.OptionJSON) {
 		if b, err := json.Marshal(&reps_json); err != nil {
 			log.Errorf("Error generating JSON report: %s", err)
 		} else {
-			log.Warnf("%s", b)
+			os.Stdout.Write(b[:])
 		}
 	}
 
